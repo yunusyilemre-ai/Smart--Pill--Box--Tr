@@ -45,43 +45,43 @@ document.getElementById('saveBtn').addEventListener('click', () => {
     }
 });
 
+
 // 2. MOTOR DÖNÜNCE BİLDİRİM ALMA VE SIFIRLAMA
 const statusRef = ref(database, 'users/status');
 onValue(statusRef, (snapshot) => {
     const data = snapshot.val();
-    // Eğer Firebase'de doğrudan metin değil de {status: "..."} objesi varsa ona göre okur
     const status = (data && typeof data === 'object') ? data.status : data;
     const opStatus = document.getElementById('opStatus');
     
     if (status === "motor_dondu") {
-        // Ekranda bildirim kutusunu göster
+        // --- 1. TİTREŞİMİ EN BAŞA ALDIK (iOS GÜVENLİĞİ İÇİN) ---
+        if ('vibrate' in navigator) {
+            navigator.vibrate([500, 200, 500]); // Titreşim komutunu hemen gönder
+        }
+
+        // --- 2. EKRAN MESAJINI GÖSTER ---
         opStatus.style.display = "block";
         opStatus.style.backgroundColor = "rgba(233, 30, 99, 0.2)";
         opStatus.style.border = "1px solid #e91e63";
         opStatus.style.color = "white";
         opStatus.innerHTML = "🔔 BİLDİRİM: İlaç verildi, motor döndü!";
         
-        // Tarayıcı Bildirimi Gönder
+        // --- 3. TARAYICI BİLDİRİMİNİ GÖNDER ---
         if (Notification.permission === "granted") {
             new Notification("İlaç Bildirimi", { 
                 body: "Motor hazneyi açtı, ilacınızı alabilirsiniz.",
                 icon: "pill.png" 
             });
-            // --- TİTREŞİM EKLEMESİ ---
-if ('vibrate' in navigator) {
-    navigator.vibrate([500, 200, 500]); // 500ms titre, 200ms dur, 500ms titre
-}
         } else if (Notification.permission !== "denied") {
             Notification.requestPermission();
         }
 
-        // --- YENİ: SIFIRLAMA MANTIĞI ---
-        // 5 saniye sonra durumu "beklemede"ye çek ki bir sonraki bildirimi tetikleyebilsin
+        // --- 4. SIFIRLAMA MANTIĞI ---
         setTimeout(() => {
             set(ref(database, 'users/status'), {
                 status: "beklemede"
             }).then(() => {
-                opStatus.style.display = "none"; // Ekrandaki pembe kutuyu gizle
+                opStatus.style.display = "none";
                 console.log("Durum sıfırlandı: beklemede");
             });
         }, 5000);
