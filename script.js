@@ -67,6 +67,10 @@ onValue(statusRef, (snapshot) => {
                 body: "Motor hazneyi açtı, ilacınızı alabilirsiniz.",
                 icon: "pill.png" 
             });
+            // --- TİTREŞİM EKLEMESİ ---
+if ('vibrate' in navigator) {
+    navigator.vibrate([500, 200, 500]); // 500ms titre, 200ms dur, 500ms titre
+}
         } else if (Notification.permission !== "denied") {
             Notification.requestPermission();
         }
