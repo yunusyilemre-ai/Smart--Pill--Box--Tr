@@ -1,7 +1,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
 import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-database.js";
 
-// Firebase Bilgilerin (Değiştirilmedi)
+// Firebase Bilgilerin
 const firebaseConfig = {
   apiKey: "AIzaSyDMQG5IYpNVbbi4DsEhjOItF1LuP2YmDH4",
   authDomain: "smart-pill-box-2025.firebaseapp.com",
@@ -14,21 +14,20 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const database = getDatabase(app);
 
-// 1. VERİ KAYDETME (Yeni Plan Ekleme - Güncellendi)
+// 1. VERİ KAYDETME (Yeni Plan Ekleme)
 document.getElementById('saveBtn').addEventListener('click', () => {
     const name = document.getElementById('pillsName').value;
     const cabin = document.getElementById('containerSelect').value;
     const time = document.getElementById('pillTime').value;
-    const freq = document.getElementById('frequencySelect').value; // Yeni: Sıklık seçeneği
+    const freq = document.getElementById('frequencySelect').value;
 
     const statusMsg = document.getElementById('opStatus');
 
     if (name && time) {
-        // Firebase'e 'frequency' alanını ekleyerek kaydediyoruz
         set(ref(database, 'users/containers/container-' + cabin), {
             pillsName: name,
             notifications: [time],
-            frequency: freq, // Kartın okuyacağı kritik veri
+            frequency: freq,
             lastDispensed: new Date().toISOString()
         }).then(() => {
             statusMsg.style.display = "block";
@@ -36,7 +35,6 @@ document.getElementById('saveBtn').addEventListener('click', () => {
             statusMsg.style.color = "#00f2fe";
             statusMsg.innerHTML = "✅ Hazne " + cabin + " planı güncellendi!";
             
-            // 3 saniye sonra mesajı gizle
             setTimeout(() => { statusMsg.style.display = "none"; }, 3000);
         }).catch((error) => {
             console.error("Hata:", error);
@@ -47,23 +45,41 @@ document.getElementById('saveBtn').addEventListener('click', () => {
     }
 });
 
-// 2. MOTOR DÖNÜNCE BİLDİRİM ALMA (Status İzleme - Aynı kaldı)
+// 2. MOTOR DÖNÜNCE BİLDİRİM ALMA VE SIFIRLAMA
 const statusRef = ref(database, 'users/status');
 onValue(statusRef, (snapshot) => {
-    const status = snapshot.val();
+    const data = snapshot.val();
+    // Eğer Firebase'de doğrudan metin değil de {status: "..."} objesi varsa ona göre okur
+    const status = (data && typeof data === 'object') ? data.status : data;
     const opStatus = document.getElementById('opStatus');
     
     if (status === "motor_dondu") {
+        // Ekranda bildirim kutusunu göster
         opStatus.style.display = "block";
         opStatus.style.backgroundColor = "rgba(233, 30, 99, 0.2)";
         opStatus.style.border = "1px solid #e91e63";
-        opStatus.style.color = "#white";
+        opStatus.style.color = "white";
         opStatus.innerHTML = "🔔 BİLDİRİM: İlaç verildi, motor döndü!";
         
+        // Tarayıcı Bildirimi Gönder
         if (Notification.permission === "granted") {
-            new Notification("İlaç Bildirimi", { body: "Motor hazneyi açtı, ilacınızı alabilirsiniz." });
-        } else {
+            new Notification("İlaç Bildirimi", { 
+                body: "Motor hazneyi açtı, ilacınızı alabilirsiniz.",
+                icon: "pill.png" 
+            });
+        } else if (Notification.permission !== "denied") {
             Notification.requestPermission();
         }
+
+        // --- YENİ: SIFIRLAMA MANTIĞI ---
+        // 5 saniye sonra durumu "beklemede"ye çek ki bir sonraki bildirimi tetikleyebilsin
+        setTimeout(() => {
+            set(ref(database, 'users/status'), {
+                status: "beklemede"
+            }).then(() => {
+                opStatus.style.display = "none"; // Ekrandaki pembe kutuyu gizle
+                console.log("Durum sıfırlandı: beklemede");
+            });
+        }, 5000);
     }
 });
