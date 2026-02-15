@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Akıllı İlaç Kutusu | Kontrol Paneli</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary: #4facfe;
+            --secondary: #00f2fe;
+            --accent: #e91e63;
+            --bg: #0f172a;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h2 {
+            margin-top: 20px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 2rem;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(15px);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            width: 100%;
+            max-width: 400px;
+            margin-bottom: 25px;
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        h3 {
+            margin-top: 0;
+            color: var(--secondary);
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        label {
+            font-size: 0.85rem;
+            color: #cbd5e1;
+            margin-top: 10px;
+            display: block;
+        }
+
+        input, select, button {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            color: white;
+            outline: none;
+            font-family: inherit;
+        }
+
+        option {
+            background: #1e293b;
+            color: white;
+        }
+
+        input::placeholder {
+            color: #94a3b8;
+        }
+
+        button {
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        button:hover {
+            box-shadow: 0 0 15px rgba(79, 172, 254, 0.5);
+            opacity: 0.9;
+        }
+
+        .status-msg {
+            padding: 12px;
+            border-radius: 8px;
+            display: none;
+            margin-top: 15px;
+            text-align: center;
+            font-size: 0.9rem;
+            background: rgba(0, 242, 254, 0.1);
+            border: 1px solid var(--secondary);
+        }
+
+        #pill-list {
+            width: 100%;
+            max-width: 400px;
+        }
+
+        /* İlaç listesi kartları için stil */
+        .pill-item {
+            background: rgba(255, 255, 255, 0.05);
+            margin-bottom: 10px;
+            padding: 15px;
+            border-radius: 12px;
+            border-left: 4px solid var(--primary);
+        }
+    </style>
+</head>
+<body>
+
+    <h2><i class="fas fa-pills"></i> Akıllı İlaç Kutusu</h2>
+
+    <div class="card">
+        <h3><i class="fas fa-calendar-plus"></i> Yeni Plan Ekle</h3>
+        
+        <label>İlaç Bilgisi</label>
+        <input type="text" id="pillsName" placeholder="Örn: Parol 500mg">
+        
+        <label>Konteyner (Hazne) Seçimi</label>
+        <select id="containerSelect">
+            <option value="1">Konteyner 1 (Motor A)</option>
+            <option value="2">Konteyner 2 (Motor B)</option>
+            <option value="3">Konteyner 3 (Motor C)</option>
+        </select>
+        
+        <label>Planlama Tipi</label>
+        <select id="frequencySelect">
+            <option value="daily">Her Gün</option>
+            <option value="weekday">Hafta İçi (Pzt-Cum)</option>
+            <option value="weekend">Hafta Sonu (Cmt-Paz)</option>
+        </select>
+
+        <label>Hatırlatma Saati</label>
+        <input type="time" id="pillTime">
+        
+        <button id="saveBtn">Firebase'e Gönder <i class="fas fa-paper-plane"></i></button>
+        <div id="opStatus" class="status-msg"></div>
+    </div>
+
+    <div id="pill-list">
+        </div>
+
+    <script type="module" src="script.js"></script>
+</body>
+</html>
