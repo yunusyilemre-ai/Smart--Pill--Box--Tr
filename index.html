@@ -130,6 +130,17 @@
             padding: 15px;
             border-radius: 12px;
             border-left: 4px solid var(--primary);
+            position: relative;
+        }
+
+        /* Kalan ilaç miktarı stili */
+        .stock-badge {
+            font-size: 0.8rem;
+            background: rgba(79, 172, 254, 0.2);
+            padding: 4px 8px;
+            border-radius: 5px;
+            float: right;
+            color: var(--secondary);
         }
     </style>
 </head>
@@ -156,6 +167,9 @@
             <option value="weekday">Hafta İçi (Pzt-Cum)</option>
             <option value="weekend">Hafta Sonu (Cmt-Paz)</option>
         </select>
+
+        <label>Toplam İlaç Miktarı (Adet)</label>
+        <input type="number" id="pillsCount" placeholder="Örn: 10" min="1">
 
         <label>Hatırlatma Saati</label>
         <input type="time" id="pillTime">
