@@ -80,6 +80,13 @@
             color: white;
             outline: none;
             font-family: inherit;
+            box-sizing: border-box; /* padding taşmalarını engellemek için eklendi */
+        }
+
+        /* Takvim ikonunun renk ayarı */
+        input[type="date"]::-webkit-calendar-picker-indicator {
+            filter: invert(1);
+            cursor: pointer;
         }
 
         option {
@@ -123,7 +130,6 @@
             max-width: 400px;
         }
 
-        /* İlaç listesi kartları için stil */
         .pill-item {
             background: rgba(255, 255, 255, 0.05);
             margin-bottom: 10px;
@@ -133,7 +139,6 @@
             position: relative;
         }
 
-        /* Kalan ilaç miktarı stili */
         .stock-badge {
             font-size: 0.8rem;
             background: rgba(79, 172, 254, 0.2);
@@ -161,12 +166,8 @@
             <option value="3">Konteyner 3 (Motor C)</option>
         </select>
         
-        <label>Planlama Tipi</label>
-        <select id="frequencySelect">
-            <option value="daily">Her Gün</option>
-            <option value="weekday">Hafta İçi (Pzt-Cum)</option>
-            <option value="weekend">Hafta Sonu (Cmt-Paz)</option>
-        </select>
+        <label>Uygulama Tarihi</label>
+        <input type="date" id="pillDate">
 
         <label>Toplam İlaç Miktarı (Adet)</label>
         <input type="number" id="pillsCount" placeholder="Örn: 10" min="1">
@@ -178,9 +179,11 @@
         <div id="opStatus" class="status-msg"></div>
     </div>
 
-    <div id="pill-list">
-        </div>
+    <div id="pill-list"></div>
 
+    <script>
+        document.getElementById('pillDate').min = new Date().toISOString().split('T')[0];
+    </script>
     <script type="module" src="script.js"></script>
 </body>
 </html>
