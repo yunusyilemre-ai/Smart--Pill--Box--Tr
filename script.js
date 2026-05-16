@@ -2,12 +2,12 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.8.0/firebas
 import { getDatabase, ref, set, onValue, update } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-database.js";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDMQG5IYpNVbbi4DsEhjOItF1LuP2YmDH4",
-  authDomain: "smart-pill-box-2025.firebaseapp.com",
-  databaseURL: "https://smart-pill-box-2025-default-rtdb.firebaseio.com",
-  projectId: "smart-pill-box-2025",
-  storageBucket: "smart-pill-box-2025.firebasestorage.app",
-  appId: "1:740889677604:web:d8db94053ea34df2c92db1"
+  apiKey: "YOUR_FIREBASE_API_KEY",
+  authDomain: "YOUR_AUTH_DOMAIN",
+  databaseURL: "YOUR_DATABASE_URL",
+  projectId: "YOUR_PROJECT_ID",
+  storageBucket: "YOUR_STORAGE_BUCKET",
+  appId: "YOUR_APP_ID"
 };
 
 const app = initializeApp(firebaseConfig);
