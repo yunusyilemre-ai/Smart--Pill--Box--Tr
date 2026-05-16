@@ -1,14 +1,14 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
 import { getDatabase, ref, set, onValue, update } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-database.js";
 
-// GÜVENLİK NOTU: API Anahtarları ve veritabanı adresleri GitHub güvenliği için maskelenmiştir.
+// Firebase Bilgilerin
 const firebaseConfig = {
-  apiKey: "YOUR_FIREBASE_API_KEY",
-  authDomain: "YOUR_AUTH_DOMAIN",
-  databaseURL: "YOUR_DATABASE_URL",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_STORAGE_BUCKET",
-  appId: "YOUR_APP_ID"
+  apiKey: "AIzaSyDMQG5IYpNVbbi4DsEhjOItF1LuP2YmDH4",
+  authDomain: "smart-pill-box-2025.firebaseapp.com",
+  databaseURL: "https://smart-pill-box-2025-default-rtdb.firebaseio.com",
+  projectId: "smart-pill-box-2025",
+  storageBucket: "smart-pill-box-2025.firebasestorage.app",
+  appId: "1:740889677604:web:d8db94053ea34df2c92db1"
 };
 
 const app = initializeApp(firebaseConfig);
@@ -19,7 +19,7 @@ document.getElementById('saveBtn').addEventListener('click', () => {
     const name = document.getElementById('pillsName').value;
     const cabin = document.getElementById('containerSelect').value;
     const time = document.getElementById('pillTime').value;
-    const dateVal = document.getElementById('pillDate').value; // Takvimden seçilen tarihi alıyoruz
+    const dateVal = document.getElementById('pillDate').value; // YENİ: Takvimden seçilen tarihi alıyoruz
     const count = parseInt(document.getElementById('pillsCount').value); 
 
     const statusMsg = document.getElementById('opStatus');
@@ -28,7 +28,7 @@ document.getElementById('saveBtn').addEventListener('click', () => {
         set(ref(database, 'users/containers/container-' + cabin), {
             pillsName: name,
             notifications: [time],
-            date: dateVal, // Firebase'e doğrudan hedef tarihi gönderiyoruz
+            date: dateVal, // YENİ: Firebase'e sıklık yerine doğrudan hedef tarihi gönderiyoruz
             pillsCount: count, 
             lastDispensed: new Date().toISOString()
         }).then(() => {
@@ -63,7 +63,7 @@ onValue(containersRef, (snapshot) => {
             const stockColor = item.pillsCount <= 0 ? 'red' : '#00f2fe';
             const stockText = item.pillsCount <= 0 ? 'BİTTİ!' : item.pillsCount + ' Adet';
             
-            // Listede artık planlanan takvim tarihi yazıyor
+            // YENİ: Listede artık eski periyot metni yerine planlanan takvim tarihi yazıyor
             const displayDate = item.date ? item.date : "Tarih Belirtilmemiş";
 
             pillItem.innerHTML = `
