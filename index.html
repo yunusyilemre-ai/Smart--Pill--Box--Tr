@@ -80,10 +80,9 @@
             color: white;
             outline: none;
             font-family: inherit;
-            box-sizing: border-box; /* padding taşmalarını engellemek için eklendi */
+            box-sizing: border-box;
         }
 
-        /* Takvim ikonunun renk ayarı */
         input[type="date"]::-webkit-calendar-picker-indicator {
             filter: invert(1);
             cursor: pointer;
@@ -166,8 +165,16 @@
             <option value="3">Konteyner 3 (Motor C)</option>
         </select>
         
-        <label>Uygulama Tarihi</label>
+        <label>Başlangıç Tarihi</label>
         <input type="date" id="pillDate">
+
+        <label>Uygulama Sıklığı (Periyot)</label>
+        <select id="intervalSelect">
+            <option value="1">Her Gün (1 Günde Bir)</option>
+            <option value="2">2 Günde Bir</option>
+            <option value="3">3 Günde Bir</option>
+            <option value="7">Haftada Bir (7 Günde Bir)</option>
+        </select>
 
         <label>Toplam İlaç Miktarı (Adet)</label>
         <input type="number" id="pillsCount" placeholder="Örn: 10" min="1">
