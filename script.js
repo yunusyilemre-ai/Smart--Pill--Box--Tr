@@ -14,22 +14,22 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const database = getDatabase(app);
 
-// 1. VERİ KAYDETME (Yeni Plan Ekleme)
+// 1. VERİ KAYDETME (Yeni Plan Ekleme - Takvim Destekli)
 document.getElementById('saveBtn').addEventListener('click', () => {
     const name = document.getElementById('pillsName').value;
     const cabin = document.getElementById('containerSelect').value;
     const time = document.getElementById('pillTime').value;
-    const freq = document.getElementById('frequencySelect').value;
-    const count = parseInt(document.getElementById('pillsCount').value); // YENİ: Sayıyı al
+    const dateVal = document.getElementById('pillDate').value; // YENİ: Takvimden seçilen tarihi alıyoruz
+    const count = parseInt(document.getElementById('pillsCount').value); 
 
     const statusMsg = document.getElementById('opStatus');
 
-    if (name && time && count > 0) {
+    if (name && time && dateVal && count > 0) {
         set(ref(database, 'users/containers/container-' + cabin), {
             pillsName: name,
             notifications: [time],
-            frequency: freq,
-            pillsCount: count, // YENİ: Firebase'e stok sayısını gönder
+            date: dateVal, // YENİ: Firebase'e sıklık yerine doğrudan hedef tarihi gönderiyoruz
+            pillsCount: count, 
             lastDispensed: new Date().toISOString()
         }).then(() => {
             statusMsg.style.display = "block";
@@ -43,7 +43,7 @@ document.getElementById('saveBtn').addEventListener('click', () => {
             alert("Kayıt sırasında bir hata oluştu!");
         });
     } else {
-        alert("Lütfen tüm alanları (İlaç adı, sayısı ve saati) doldurun!");
+        alert("Lütfen tüm alanları (İlaç adı, sayısı, tarihi ve saati) doldurun!");
     }
 });
 
@@ -60,14 +60,16 @@ onValue(containersRef, (snapshot) => {
             const pillItem = document.createElement('div');
             pillItem.className = 'pill-item';
             
-            // Kalan miktar 0 ise kırmızı uyarı ver
             const stockColor = item.pillsCount <= 0 ? 'red' : '#00f2fe';
             const stockText = item.pillsCount <= 0 ? 'BİTTİ!' : item.pillsCount + ' Adet';
+            
+            // YENİ: Listede artık eski periyot metni yerine planlanan takvim tarihi yazıyor
+            const displayDate = item.date ? item.date : "Tarih Belirtilmemiş";
 
             pillItem.innerHTML = `
                 <span class="stock-badge" style="color: ${stockColor}">Kalan: ${stockText}</span>
                 <strong>${item.pillsName}</strong><br>
-                <small><i class="far fa-clock"></i> ${item.notifications[0]} | ${item.frequency}</small>
+                <small><i class="far fa-clock"></i> Saat: ${item.notifications ? item.notifications[0] : "--:--"} | <i class="far fa-calendar-alt"></i> Tarih: ${displayDate}</small>
             `;
             pillList.appendChild(pillItem);
         });
@@ -79,24 +81,20 @@ const statusRef = ref(database, 'users/status');
 
 onValue(statusRef, (snapshot) => {
     const data = snapshot.val();
-    // Veri objeyse status alanını al, değilse doğrudan veriyi al
     const status = (data && typeof data === 'object') ? data.status : data;
     const opStatus = document.getElementById('opStatus');
     
     if (status === "motor_dondu") {
-        // Titreşim
         if ('vibrate' in navigator) {
             navigator.vibrate([500, 200, 500]);
         }
 
-        // Ekran Mesajı Stil Ayarları
         opStatus.style.display = "block";
         opStatus.style.backgroundColor = "rgba(233, 30, 99, 0.2)";
         opStatus.style.border = "1px solid #e91e63";
         opStatus.style.color = "white";
         opStatus.innerHTML = "🔔 BİLDİRİM: İlaç verildi, motor döndü!";
         
-        // Tarayıcı Bildirimi
         if (Notification.permission === "granted") {
             new Notification("İlaç Bildirimi", { 
                 body: "Motor hazneyi açtı, ilacınızı alabilirsiniz.",
@@ -104,7 +102,6 @@ onValue(statusRef, (snapshot) => {
             });
         }
 
-        // 5 saniye sonra durumu "beklemede"ye çekerek mesajı temizle
         setTimeout(() => {
             set(ref(database, 'users/status'), {
                 status: "beklemede"
@@ -114,4 +111,4 @@ onValue(statusRef, (snapshot) => {
             });
         }, 5000);
     }
-}); 
+});
